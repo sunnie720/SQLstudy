@@ -1,0 +1,402 @@
+SQL> set echo on
+SQL> set pagesize 200
+SQL> set linesize 200
+SQL> @C:\Users\sunnie\oraclesql\analytic_function_practice.sql
+SQL> /* 5장 분석함수 연습문제 */
+SQL> 
+SQL> -- 1. 모든 사원의 부서번호, 이름, 급여, 부서별 급여 순위(중복순위 계산), 이전 순위 급여
+SQL> --1) 중복순위일 때 이전 순위 급여는 본인 급여
+SQL> select department_id, first_name, salary,
+  2  	    RANK()
+  3  	      OVER (PARTITION BY department_id ORDER BY salary DESC) sal_rank,
+  4  	    FIRST_VALUE(salary)
+  5  	      OVER (PARTITION BY department_id ORDER BY salary DESC
+  6  		    ROWS 1 PRECEDING) prev_rank1
+  7  from employees;
+
+DEPARTMENT_ID FIRST_NAME                                   SALARY   SAL_RANK PREV_RANK1                                                                                                                 
+------------- ---------------------------------------- ---------- ---------- ----------                                                                                                                 
+           10 Jennifer                                       4400          1       4400                                                                                                                 
+           20 Michael                                       13000          1      13000                                                                                                                 
+           20 Pat                                            6000          2      13000                                                                                                                 
+           30 Den                                           11000          1      11000                                                                                                                 
+           30 Alexander                                      3100          2      11000                                                                                                                 
+           30 Shelli                                         2900          3       3100                                                                                                                 
+           30 Sigal                                          2800          4       2900                                                                                                                 
+           30 Guy                                            2600          5       2800                                                                                                                 
+           30 Karen                                          2500          6       2600                                                                                                                 
+           40 Susan                                          6500          1       6500                                                                                                                 
+           50 Adam                                           8200          1       8200                                                                                                                 
+           50 Matthew                                        8000          2       8200                                                                                                                 
+           50 Payam                                          7900          3       8000                                                                                                                 
+           50 Shanta                                         6500          4       7900                                                                                                                 
+           50 Kevin                                          5800          5       6500                                                                                                                 
+           50 Nandita                                        4200          6       5800                                                                                                                 
+           50 Alexis                                         4100          7       4200                                                                                                                 
+           50 Sarah                                          4000          8       4100                                                                                                                 
+           50 Britney                                        3900          9       4000                                                                                                                 
+           50 Kelly                                          3800         10       3900                                                                                                                 
+           50 Jennifer                                       3600         11       3800                                                                                                                 
+           50 Renske                                         3600         11       3600                                                                                                                 
+           50 Trenna                                         3500         13       3600                                                                                                                 
+           50 Julia                                          3400         14       3500                                                                                                                 
+           50 Jason                                          3300         15       3400                                                                                                                 
+           50 Laura                                          3300         15       3300                                                                                                                 
+           50 Winston                                        3200         17       3300                                                                                                                 
+           50 Julia                                          3200         17       3200                                                                                                                 
+           50 Stephen                                        3200         17       3200                                                                                                                 
+           50 Samuel                                         3200         17       3200                                                                                                                 
+           50 Curtis                                         3100         21       3200                                                                                                                 
+           50 Alana                                          3100         21       3100                                                                                                                 
+           50 Jean                                           3100         21       3100                                                                                                                 
+           50 Anthony                                        3000         24       3100                                                                                                                 
+           50 Kevin                                          3000         24       3000                                                                                                                 
+           50 Michael                                        2900         26       3000                                                                                                                 
+           50 Timothy                                        2900         26       2900                                                                                                                 
+           50 Mozhe                                          2800         28       2900                                                                                                                 
+           50 Vance                                          2800         28       2800                                                                                                                 
+           50 Girard                                         2800         28       2800                                                                                                                 
+           50 Irene                                          2700         31       2800                                                                                                                 
+           50 John                                           2700         31       2700                                                                                                                 
+           50 Randall                                        2600         33       2700                                                                                                                 
+           50 Donald                                         2600         33       2600                                                                                                                 
+           50 Douglas                                        2600         33       2600                                                                                                                 
+           50 Randall                                        2500         36       2600                                                                                                                 
+           50 James                                          2500         36       2500                                                                                                                 
+           50 Martha                                         2500         36       2500                                                                                                                 
+           50 Joshua                                         2500         36       2500                                                                                                                 
+           50 Peter                                          2500         36       2500                                                                                                                 
+           50 Ki                                             2400         41       2500                                                                                                                 
+           50 James                                          2400         41       2400                                                                                                                 
+           50 Steven                                         2200         43       2400                                                                                                                 
+           50 Hazel                                          2200         43       2200                                                                                                                 
+           50 TJ                                             2100         45       2200                                                                                                                 
+           60 Alexander                                      9000          1       9000                                                                                                                 
+           60 Bruce                                          6000          2       9000                                                                                                                 
+           60 David                                          4800          3       6000                                                                                                                 
+           60 Valli                                          4800          3       4800                                                                                                                 
+           60 Diana                                          4200          5       4800                                                                                                                 
+           70 Hermann                                       10000          1      10000                                                                                                                 
+           80 John                                          14000          1      14000                                                                                                                 
+           80 Karen                                         13500          2      14000                                                                                                                 
+           80 Alberto                                       12000          3      13500                                                                                                                 
+           80 Lisa                                          11500          4      12000                                                                                                                 
+           80 Ellen                                         11000          5      11500                                                                                                                 
+           80 Gerald                                        11000          5      11000                                                                                                                 
+           80 Eleni                                         10500          7      11000                                                                                                                 
+           80 Clara                                         10500          7      10500                                                                                                                 
+           80 Harrison                                      10000          9      10500                                                                                                                 
+           80 Peter                                         10000          9      10000                                                                                                                 
+           80 Janette                                       10000          9      10000                                                                                                                 
+           80 Tayler                                         9600         12      10000                                                                                                                 
+           80 David                                          9500         13       9600                                                                                                                 
+           80 Patrick                                        9500         13       9500                                                                                                                 
+           80 Danielle                                       9500         13       9500                                                                                                                 
+           80 Peter                                          9000         16       9500                                                                                                                 
+           80 Allan                                          9000         16       9000                                                                                                                 
+           80 Alyssa                                         8800         18       9000                                                                                                                 
+           80 Jonathon                                       8600         19       8800                                                                                                                 
+           80 Jack                                           8400         20       8600                                                                                                                 
+           80 Christopher                                    8000         21       8400                                                                                                                 
+           80 Lindsey                                        8000         21       8000                                                                                                                 
+           80 Nanette                                        7500         23       8000                                                                                                                 
+           80 Louise                                         7500         23       7500                                                                                                                 
+           80 William                                        7400         25       7500                                                                                                                 
+           80 Elizabeth                                      7300         26       7400                                                                                                                 
+           80 Mattea                                         7200         27       7300                                                                                                                 
+           80 Oliver                                         7000         28       7200                                                                                                                 
+           80 Sarath                                         7000         28       7000                                                                                                                 
+           80 David                                          6800         30       7000                                                                                                                 
+           80 Sundar                                         6400         31       6800                                                                                                                 
+           80 Charles                                        6200         32       6400                                                                                                                 
+           80 Amit                                           6200         32       6200                                                                                                                 
+           80 Sundita                                        6100         34       6200                                                                                                                 
+           90 Steven                                        24000          1      24000                                                                                                                 
+           90 Neena                                         17000          2      24000                                                                                                                 
+           90 Lex                                           17000          2      17000                                                                                                                 
+          100 Nancy                                         12008          1      12008                                                                                                                 
+          100 Daniel                                         9000          2      12008                                                                                                                 
+          100 John                                           8200          3       9000                                                                                                                 
+          100 Jose Manuel                                    7800          4       8200                                                                                                                 
+          100 Ismael                                         7700          5       7800                                                                                                                 
+          100 Luis                                           6900          6       7700                                                                                                                 
+          110 Shelley                                       12008          1      12008                                                                                                                 
+          110 William                                        8300          2      12008                                                                                                                 
+              Kimberely                                      7000          1       7000                                                                                                                 
+
+107 행이 선택되었습니다.
+
+SQL> --2) 중복순위일 때 이전 순위 급여는 0
+SQL> select department_id, first_name, salary,
+  2  	    RANK()
+  3  	      OVER (PARTITION BY department_id ORDER BY salary DESC) sal_rank,
+  4  	    LAG(salary,1,0)
+  5  	      OVER (PARTITION BY department_id ORDER BY salary DESC) prev_rank2
+  6  from employees;
+
+DEPARTMENT_ID FIRST_NAME                                   SALARY   SAL_RANK PREV_RANK2                                                                                                                 
+------------- ---------------------------------------- ---------- ---------- ----------                                                                                                                 
+           10 Jennifer                                       4400          1          0                                                                                                                 
+           20 Michael                                       13000          1          0                                                                                                                 
+           20 Pat                                            6000          2      13000                                                                                                                 
+           30 Den                                           11000          1          0                                                                                                                 
+           30 Alexander                                      3100          2      11000                                                                                                                 
+           30 Shelli                                         2900          3       3100                                                                                                                 
+           30 Sigal                                          2800          4       2900                                                                                                                 
+           30 Guy                                            2600          5       2800                                                                                                                 
+           30 Karen                                          2500          6       2600                                                                                                                 
+           40 Susan                                          6500          1          0                                                                                                                 
+           50 Adam                                           8200          1          0                                                                                                                 
+           50 Matthew                                        8000          2       8200                                                                                                                 
+           50 Payam                                          7900          3       8000                                                                                                                 
+           50 Shanta                                         6500          4       7900                                                                                                                 
+           50 Kevin                                          5800          5       6500                                                                                                                 
+           50 Nandita                                        4200          6       5800                                                                                                                 
+           50 Alexis                                         4100          7       4200                                                                                                                 
+           50 Sarah                                          4000          8       4100                                                                                                                 
+           50 Britney                                        3900          9       4000                                                                                                                 
+           50 Kelly                                          3800         10       3900                                                                                                                 
+           50 Jennifer                                       3600         11       3800                                                                                                                 
+           50 Renske                                         3600         11       3600                                                                                                                 
+           50 Trenna                                         3500         13       3600                                                                                                                 
+           50 Julia                                          3400         14       3500                                                                                                                 
+           50 Jason                                          3300         15       3400                                                                                                                 
+           50 Laura                                          3300         15       3300                                                                                                                 
+           50 Winston                                        3200         17       3300                                                                                                                 
+           50 Julia                                          3200         17       3200                                                                                                                 
+           50 Stephen                                        3200         17       3200                                                                                                                 
+           50 Samuel                                         3200         17       3200                                                                                                                 
+           50 Curtis                                         3100         21       3200                                                                                                                 
+           50 Alana                                          3100         21       3100                                                                                                                 
+           50 Jean                                           3100         21       3100                                                                                                                 
+           50 Anthony                                        3000         24       3100                                                                                                                 
+           50 Kevin                                          3000         24       3000                                                                                                                 
+           50 Michael                                        2900         26       3000                                                                                                                 
+           50 Timothy                                        2900         26       2900                                                                                                                 
+           50 Mozhe                                          2800         28       2900                                                                                                                 
+           50 Vance                                          2800         28       2800                                                                                                                 
+           50 Girard                                         2800         28       2800                                                                                                                 
+           50 Irene                                          2700         31       2800                                                                                                                 
+           50 John                                           2700         31       2700                                                                                                                 
+           50 Randall                                        2600         33       2700                                                                                                                 
+           50 Donald                                         2600         33       2600                                                                                                                 
+           50 Douglas                                        2600         33       2600                                                                                                                 
+           50 Randall                                        2500         36       2600                                                                                                                 
+           50 James                                          2500         36       2500                                                                                                                 
+           50 Martha                                         2500         36       2500                                                                                                                 
+           50 Joshua                                         2500         36       2500                                                                                                                 
+           50 Peter                                          2500         36       2500                                                                                                                 
+           50 Ki                                             2400         41       2500                                                                                                                 
+           50 James                                          2400         41       2400                                                                                                                 
+           50 Steven                                         2200         43       2400                                                                                                                 
+           50 Hazel                                          2200         43       2200                                                                                                                 
+           50 TJ                                             2100         45       2200                                                                                                                 
+           60 Alexander                                      9000          1          0                                                                                                                 
+           60 Bruce                                          6000          2       9000                                                                                                                 
+           60 David                                          4800          3       6000                                                                                                                 
+           60 Valli                                          4800          3       4800                                                                                                                 
+           60 Diana                                          4200          5       4800                                                                                                                 
+           70 Hermann                                       10000          1          0                                                                                                                 
+           80 John                                          14000          1          0                                                                                                                 
+           80 Karen                                         13500          2      14000                                                                                                                 
+           80 Alberto                                       12000          3      13500                                                                                                                 
+           80 Lisa                                          11500          4      12000                                                                                                                 
+           80 Ellen                                         11000          5      11500                                                                                                                 
+           80 Gerald                                        11000          5      11000                                                                                                                 
+           80 Eleni                                         10500          7      11000                                                                                                                 
+           80 Clara                                         10500          7      10500                                                                                                                 
+           80 Harrison                                      10000          9      10500                                                                                                                 
+           80 Peter                                         10000          9      10000                                                                                                                 
+           80 Janette                                       10000          9      10000                                                                                                                 
+           80 Tayler                                         9600         12      10000                                                                                                                 
+           80 David                                          9500         13       9600                                                                                                                 
+           80 Patrick                                        9500         13       9500                                                                                                                 
+           80 Danielle                                       9500         13       9500                                                                                                                 
+           80 Peter                                          9000         16       9500                                                                                                                 
+           80 Allan                                          9000         16       9000                                                                                                                 
+           80 Alyssa                                         8800         18       9000                                                                                                                 
+           80 Jonathon                                       8600         19       8800                                                                                                                 
+           80 Jack                                           8400         20       8600                                                                                                                 
+           80 Christopher                                    8000         21       8400                                                                                                                 
+           80 Lindsey                                        8000         21       8000                                                                                                                 
+           80 Nanette                                        7500         23       8000                                                                                                                 
+           80 Louise                                         7500         23       7500                                                                                                                 
+           80 William                                        7400         25       7500                                                                                                                 
+           80 Elizabeth                                      7300         26       7400                                                                                                                 
+           80 Mattea                                         7200         27       7300                                                                                                                 
+           80 Oliver                                         7000         28       7200                                                                                                                 
+           80 Sarath                                         7000         28       7000                                                                                                                 
+           80 David                                          6800         30       7000                                                                                                                 
+           80 Sundar                                         6400         31       6800                                                                                                                 
+           80 Charles                                        6200         32       6400                                                                                                                 
+           80 Amit                                           6200         32       6200                                                                                                                 
+           80 Sundita                                        6100         34       6200                                                                                                                 
+           90 Steven                                        24000          1          0                                                                                                                 
+           90 Neena                                         17000          2      24000                                                                                                                 
+           90 Lex                                           17000          2      17000                                                                                                                 
+          100 Nancy                                         12008          1          0                                                                                                                 
+          100 Daniel                                         9000          2      12008                                                                                                                 
+          100 John                                           8200          3       9000                                                                                                                 
+          100 Jose Manuel                                    7800          4       8200                                                                                                                 
+          100 Ismael                                         7700          5       7800                                                                                                                 
+          100 Luis                                           6900          6       7700                                                                                                                 
+          110 Shelley                                       12008          1          0                                                                                                                 
+          110 William                                        8300          2      12008                                                                                                                 
+              Kimberely                                      7000          1          0                                                                                                                 
+
+107 행이 선택되었습니다.
+
+SQL> 
+SQL> --2. 170번 사원의 직전 사원번호인 사원의 이름 ★★★
+SQL> select first_name
+  2  from employees
+  3  where employee_id = (
+  4  	 select prev_id
+  5  	 from (select employee_id,
+  6  		 LAG(employee_id,1,0) OVER (order by employee_id) as prev_id
+  7  	       from employees)
+  8  	 where employee_id=170)
+  9  ;
+
+FIRST_NAME                                                                                                                                                                                              
+----------------------------------------                                                                                                                                                                
+Harrison                                                                                                                                                                                                
+
+SQL> 
+SQL> --3. 모든사원 급여정보, 각 사원 근무 부서의 가장 적은 급여, 가장 큰 급여,
+SQL> -- 가장 큰 급여와의 급여 차이 ★★★
+SQL> select
+  2  	 employee_id, department_id,
+  3  	 FIRST_VALUE(salary)
+  4  	   OVER (PARTITION BY department_id ORDER BY salary
+  5  		 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+  6  	 as lower_sal,
+  7  	 salary as my_sal,
+  8  	 LAST_VALUE(salary)
+  9  	   OVER (PARTITION BY department_id ORDER BY salary
+ 10  		 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+ 11  	 as higher_sal,
+ 12  	 LAST_VALUE(salary)
+ 13  	   OVER (PARTITION BY department_id ORDER BY salary
+ 14  		 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+ 15  	 - salary as diff_sal
+ 16  from employees;
+
+EMPLOYEE_ID DEPARTMENT_ID  LOWER_SAL     MY_SAL HIGHER_SAL   DIFF_SAL                                                                                                                                   
+----------- ------------- ---------- ---------- ---------- ----------                                                                                                                                   
+        200            10       4400       4400       4400          0                                                                                                                                   
+        202            20       6000       6000      13000       7000                                                                                                                                   
+        201            20       6000      13000      13000          0                                                                                                                                   
+        119            30       2500       2500      11000       8500                                                                                                                                   
+        118            30       2500       2600      11000       8400                                                                                                                                   
+        117            30       2500       2800      11000       8200                                                                                                                                   
+        116            30       2500       2900      11000       8100                                                                                                                                   
+        115            30       2500       3100      11000       7900                                                                                                                                   
+        114            30       2500      11000      11000          0                                                                                                                                   
+        203            40       6500       6500       6500          0                                                                                                                                   
+        132            50       2100       2100       8200       6100                                                                                                                                   
+        136            50       2100       2200       8200       6000                                                                                                                                   
+        128            50       2100       2200       8200       6000                                                                                                                                   
+        135            50       2100       2400       8200       5800                                                                                                                                   
+        127            50       2100       2400       8200       5800                                                                                                                                   
+        140            50       2100       2500       8200       5700                                                                                                                                   
+        144            50       2100       2500       8200       5700                                                                                                                                   
+        131            50       2100       2500       8200       5700                                                                                                                                   
+        191            50       2100       2500       8200       5700                                                                                                                                   
+        182            50       2100       2500       8200       5700                                                                                                                                   
+        198            50       2100       2600       8200       5600                                                                                                                                   
+        199            50       2100       2600       8200       5600                                                                                                                                   
+        143            50       2100       2600       8200       5600                                                                                                                                   
+        139            50       2100       2700       8200       5500                                                                                                                                   
+        126            50       2100       2700       8200       5500                                                                                                                                   
+        183            50       2100       2800       8200       5400                                                                                                                                   
+        195            50       2100       2800       8200       5400                                                                                                                                   
+        130            50       2100       2800       8200       5400                                                                                                                                   
+        190            50       2100       2900       8200       5300                                                                                                                                   
+        134            50       2100       2900       8200       5300                                                                                                                                   
+        187            50       2100       3000       8200       5200                                                                                                                                   
+        197            50       2100       3000       8200       5200                                                                                                                                   
+        142            50       2100       3100       8200       5100                                                                                                                                   
+        196            50       2100       3100       8200       5100                                                                                                                                   
+        181            50       2100       3100       8200       5100                                                                                                                                   
+        180            50       2100       3200       8200       5000                                                                                                                                   
+        138            50       2100       3200       8200       5000                                                                                                                                   
+        194            50       2100       3200       8200       5000                                                                                                                                   
+        125            50       2100       3200       8200       5000                                                                                                                                   
+        133            50       2100       3300       8200       4900                                                                                                                                   
+        129            50       2100       3300       8200       4900                                                                                                                                   
+        186            50       2100       3400       8200       4800                                                                                                                                   
+        141            50       2100       3500       8200       4700                                                                                                                                   
+        189            50       2100       3600       8200       4600                                                                                                                                   
+        137            50       2100       3600       8200       4600                                                                                                                                   
+        188            50       2100       3800       8200       4400                                                                                                                                   
+        193            50       2100       3900       8200       4300                                                                                                                                   
+        192            50       2100       4000       8200       4200                                                                                                                                   
+        185            50       2100       4100       8200       4100                                                                                                                                   
+        184            50       2100       4200       8200       4000                                                                                                                                   
+        124            50       2100       5800       8200       2400                                                                                                                                   
+        123            50       2100       6500       8200       1700                                                                                                                                   
+        122            50       2100       7900       8200        300                                                                                                                                   
+        120            50       2100       8000       8200        200                                                                                                                                   
+        121            50       2100       8200       8200          0                                                                                                                                   
+        107            60       4200       4200       9000       4800                                                                                                                                   
+        105            60       4200       4800       9000       4200                                                                                                                                   
+        106            60       4200       4800       9000       4200                                                                                                                                   
+        104            60       4200       6000       9000       3000                                                                                                                                   
+        103            60       4200       9000       9000          0                                                                                                                                   
+        204            70      10000      10000      10000          0                                                                                                                                   
+        173            80       6100       6100      14000       7900                                                                                                                                   
+        179            80       6100       6200      14000       7800                                                                                                                                   
+        167            80       6100       6200      14000       7800                                                                                                                                   
+        166            80       6100       6400      14000       7600                                                                                                                                   
+        165            80       6100       6800      14000       7200                                                                                                                                   
+        161            80       6100       7000      14000       7000                                                                                                                                   
+        155            80       6100       7000      14000       7000                                                                                                                                   
+        164            80       6100       7200      14000       6800                                                                                                                                   
+        172            80       6100       7300      14000       6700                                                                                                                                   
+        171            80       6100       7400      14000       6600                                                                                                                                   
+        154            80       6100       7500      14000       6500                                                                                                                                   
+        160            80       6100       7500      14000       6500                                                                                                                                   
+        159            80       6100       8000      14000       6000                                                                                                                                   
+        153            80       6100       8000      14000       6000                                                                                                                                   
+        177            80       6100       8400      14000       5600                                                                                                                                   
+        176            80       6100       8600      14000       5400                                                                                                                                   
+        175            80       6100       8800      14000       5200                                                                                                                                   
+        158            80       6100       9000      14000       5000                                                                                                                                   
+        152            80       6100       9000      14000       5000                                                                                                                                   
+        163            80       6100       9500      14000       4500                                                                                                                                   
+        151            80       6100       9500      14000       4500                                                                                                                                   
+        157            80       6100       9500      14000       4500                                                                                                                                   
+        170            80       6100       9600      14000       4400                                                                                                                                   
+        169            80       6100      10000      14000       4000                                                                                                                                   
+        150            80       6100      10000      14000       4000                                                                                                                                   
+        156            80       6100      10000      14000       4000                                                                                                                                   
+        149            80       6100      10500      14000       3500                                                                                                                                   
+        162            80       6100      10500      14000       3500                                                                                                                                   
+        148            80       6100      11000      14000       3000                                                                                                                                   
+        174            80       6100      11000      14000       3000                                                                                                                                   
+        168            80       6100      11500      14000       2500                                                                                                                                   
+        147            80       6100      12000      14000       2000                                                                                                                                   
+        146            80       6100      13500      14000        500                                                                                                                                   
+        145            80       6100      14000      14000          0                                                                                                                                   
+        102            90      17000      17000      24000       7000                                                                                                                                   
+        101            90      17000      17000      24000       7000                                                                                                                                   
+        100            90      17000      24000      24000          0                                                                                                                                   
+        113           100       6900       6900      12008       5108                                                                                                                                   
+        111           100       6900       7700      12008       4308                                                                                                                                   
+        112           100       6900       7800      12008       4208                                                                                                                                   
+        110           100       6900       8200      12008       3808                                                                                                                                   
+        109           100       6900       9000      12008       3008                                                                                                                                   
+        108           100       6900      12008      12008          0                                                                                                                                   
+        206           110       8300       8300      12008       3708                                                                                                                                   
+        205           110       8300      12008      12008          0                                                                                                                                   
+        178                     7000       7000       7000          0                                                                                                                                   
+
+107 행이 선택되었습니다.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> spool off
