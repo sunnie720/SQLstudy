@@ -1,0 +1,49 @@
+SQL> set echo on
+SQL> set pagesize 200
+SQL> set linesize 200
+SQL> @C:\Users\sunnie\oraclesql\transaction_practice.sql
+SQL> /* Transaction 연습문제 */
+SQL> 
+SQL> --1. EMPLOYEES 테이블의 사본 테이블을 EMP_TEMP 이름으로 생성
+SQL> CREATE TABLE emp_temp AS SELECT * FROM employees;
+CREATE TABLE emp_temp AS SELECT * FROM employees
+             *
+1행에 오류:
+ORA-00955: 기존의 객체가 이름을 사용하고 있습니다. 
+
+
+SQL> 
+SQL> --2. emp_temp 테이블에서 20번 부서 사원의 정보를 삭제하고 롤백 지점(SVPNT_DEL_20) 생성
+SQL> DELETE FROM emp_temp WHERE employee_id=20;
+
+0 행이 삭제되었습니다.
+
+SQL> SAVEPOINT SVPNT_DEL_20;
+
+저장점이 생성되었습니다.
+
+SQL> 
+SQL> --3. 50번부서의 사원의 정보를 삭제하고 롤백 지점(SVPNT_DEL_50) 생성
+SQL> DELETE FROM emp_temp WHERE employee_id=50;
+
+0 행이 삭제되었습니다.
+
+SQL> SAVEPOINT SVPNT_DEL_50;
+
+저장점이 생성되었습니다.
+
+SQL> 
+SQL> --4. 60번 부서 사원 정보 삭제
+SQL> DELETE FROM emp_temp WHERE employee_id=60;
+
+0 행이 삭제되었습니다.
+
+SQL> 
+SQL> --5. 앞서 60번 부서 사원 정보 삭제했던 작업 취소
+SQL> ROLLBACK TO SVPNT_DEL_50;
+
+롤백이 완료되었습니다.
+
+SQL> 
+SQL> 
+SQL> spool off
